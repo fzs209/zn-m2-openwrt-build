@@ -18,7 +18,7 @@ permissions:
   actions: write
 
 env:
-  REPO_URL: https://github.com/openwrt-fork/ipq6000.git
+  REPO_URL: https://github.com/fzs209/sdf8057-ipq6000.git
   REPO_BRANCH: master
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: ./config/zn-m2.config
