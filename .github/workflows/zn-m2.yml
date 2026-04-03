@@ -53,8 +53,9 @@ jobs:
         docker-images: true
         swap-storage: true
 
+    # 已升级：checkout 从 v3.1.0 → v4
     - name: Checkout
-      uses: actions/checkout@v3.1.0
+      uses: actions/checkout@v4
 
     - name: Initialization environment
       env:
@@ -117,7 +118,7 @@ jobs:
       run: |
         cd openwrt
         make defconfig
-        make download -j8
+        make download -j$(nproc)
         find dl -size -1024c -exec ls -l {} \;
         find dl -size -1024c -exec rm -f {} \;
 
@@ -135,8 +136,9 @@ jobs:
     - name: Check space usage
       run: df -hT
 
+    # 已修复：upload-artifact 从 v3 → v4
     - name: Upload bin directory
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: steps.compile.outputs.status == 'success' && env.UPLOAD_BIN_DIR == 'true'
       with:
         name: OpenWrt_bin${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
@@ -150,8 +152,9 @@ jobs:
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         echo "status=success" >> $GITHUB_OUTPUT
 
+    # 已修复：upload-artifact 从 v3 → v4
     - name: Upload firmware directory
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ipq6000${{ env.FILE_DATE }}
         path: ${{ env.FIRMWARE }}
@@ -162,8 +165,6 @@ jobs:
         echo "release_tag=ZN-M2-2024_$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_OUTPUT
         touch release.txt
         echo "ZN-M2-2024 firmware" >> release.txt
-        [ $UPLOAD_COWTRANSFER = true ] && echo "🔗 [Cowtransfer](${{ steps.cowtransfer.outputs.url }})" >> release.txt
-        [ $UPLOAD_WETRANSFER = true ] && echo "🔗 [WeTransfer](${{ steps.wetransfer.outputs.url }})" >> release.txt
         echo "status=success" >> $GITHUB_OUTPUT
 
     - name: Upload firmware to release
